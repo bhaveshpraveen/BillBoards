@@ -60,7 +60,9 @@ for song_name in list_of_songs:
         dictionary_with_views[views] = entire_link
         if max_views < views:
             max_views = views
-    os.system("youtube-dl --extract-audio --audio-format mp3 {}".format(entire_link))
+
+    link_to_download = dictionary_with_views[max_views]
+    os.system("youtube-dl --extract-audio --audio-format mp3 {}".format(link_to_download))
 
     # video_list = soup.find_all('a', class_=' yt-uix-sessionlink      spf-link ')
 
