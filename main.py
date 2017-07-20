@@ -13,12 +13,12 @@ def ignore_everything_other_than_video(link):
         return False
 
 
-def extract_view_count_from_url(url):
-    data_object = os.popen('youtube-dl -J "{}"'.format(url))
-    data = data_object.readline()
-    data_dictionary = json.loads(data)
-    ''' If view_count not present, default to None '''
-    return data_dictionary.get('view_count', None)
+# def extract_view_count_from_url(url):
+#     data_object = os.popen('youtube-dl -J "{}"'.format(url))
+#     data = data_object.readline()
+#     data_dictionary = json.loads(data)
+#     ''' If view_count not present, default to None '''
+#     return data_dictionary.get('view_count', None)
 
 
 def formatting_views(views_string):
@@ -67,7 +67,15 @@ def formatting(name):
     name = re.sub('\t', '', name)
     return name
 
-with open('/home/ichigo/Desktop/billboards/list') as f:
+
+def change_dir():
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+    return dname
+
+path_of_directory = change_dir()
+with open(os.path.join(path_of_directory, 'list')) as f:
     list_of_songs = f.readlines()
 
 songs_not_downloaded = []
