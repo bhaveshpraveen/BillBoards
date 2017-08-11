@@ -17,7 +17,7 @@ def formatting_views(views_string):
 
 
 def scraper(content_of_page):
-    ''' Change the line below for discrepancies in scraping '''
+    ''' Change the line below if there's any discrepancy in scraping '''
     divisions = content_of_page.find_all('div', class_="yt-lockup-content")
     max_views = 0
     d = {}
@@ -56,22 +56,33 @@ def change_dir():
     os.chdir(dname)
     return dname
 
-path_of_directory = change_dir()
-with open(os.path.join(path_of_directory, 'list')) as f:
-    list_of_songs = f.readlines()
+def main():
+    path_of_directory = change_dir()
+    with open(os.path.join(path_of_directory, 'list')) as f:
+        list_of_songs = f.readlines()
 
-songs_not_downloaded = []
+    songs_not_downloaded = []
 
 
-for song_name in list_of_songs:
-    song_name = formatting(song_name)
-    response = requests.get('https://www.youtube.com/results?', params={'search_query': song_name})
-    content = BeautifulSoup(response.content, 'lxml')
-    proper_video = scraper(content)
-    if not proper_video:
-        songs_not_downloaded.append(song_name)
-        continue
-    entire_link = "https://www.youtube.com{}".format(proper_video['link'])
-    command = "youtube-dl -q --extract-audio --audio-format mp3 --xattrs --embed-thumbnail --audio-quality 0  -o '%(title)s.%(ext)s' '{}'".format(entire_link)
-    os.system(command)
+    for song_name in list_of_songs:
+        song_name = formatting(song_name)
+        response = requests.get('https://www.youtube.com/results?', params={'search_query': song_name})
+        content = BeautifulSoup(response.content, 'lxml')
+        proper_video = scraper(content)
+        if not proper_video:
+            songs_not_downloaded.append(song_name)
+            continue
+        entire_link = "https://www.youtube.com{}".format(proper_video['link'])
+        command = "youtube-dl -q --extract-audio --audio-format mp3 --xattrs --embed-thumbnail --audio-quality 0  -o '%(title)s.%(ext)s' '{}'".format(entire_link)
+        os.system(command)
+    
+    if songs_not_downloaded:
+        print('The following songs could not be downloaded: ')
+        for index, song in enumerate(songs_not_downloaded):
+            print('{}: {}'.format(index + 1, song))
+
+
+
+if __name__ == '__main__':
+    main()
 
